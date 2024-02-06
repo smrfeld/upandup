@@ -1,5 +1,4 @@
 import upandup as upup
-from loguru import logger
 from dataclasses import dataclass
 from mashumaro import DataClassDictMixin
 
@@ -33,4 +32,4 @@ load_data_schema = register_updates()
 # Test the update
 data = {"x": 1}
 obj = load_data_schema(data, upup.Options())
-logger.info(f"Loaded object: {obj}")
+print(f"Loaded object: {obj}")
