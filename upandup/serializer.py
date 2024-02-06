@@ -1,6 +1,7 @@
 from enum import Enum
 import os
 from typing import Union
+from loguru import logger
 
 
 class Serializer(Enum):
@@ -63,11 +64,8 @@ def serialize_to_str(obj: object) -> str:
         raise ValueError(f"Unknown type: {type(d)}")
 
 
-def deserialize_obj(data: dict, cls: type, serializer: Serializer):
-    if serializer == Serializer.DICT:
-        assert hasattr(cls, "to_dict") and hasattr(cls, "from_dict"), f"Serializer class must have to_dict/from_dict methods"
-        return cls.from_dict(data) # type: ignore
-    elif serializer == Serializer.JSON:
+def deserialize_obj(data: Union[dict,str], cls: type, serializer: Serializer):
+    if serializer == Serializer.JSON:
         assert hasattr(cls, "to_json") and hasattr(cls, "from_json"), f"Serializer class must have to_json/from_json methods"
         return cls.from_json(data) # type: ignore
     elif serializer == Serializer.ORJSON:
@@ -79,16 +77,15 @@ def deserialize_obj(data: dict, cls: type, serializer: Serializer):
     elif serializer == Serializer.TOML:
         assert hasattr(cls, "to_toml") and hasattr(cls, "from_toml"), f"Serializer class must have to_toml/from_toml methods"
         return cls.from_toml(data) # type: ignore
+    elif serializer == Serializer.DICT:
+        assert hasattr(cls, "to_dict") and hasattr(cls, "from_dict"), f"Serializer class must have to_dict/from_dict methods"
+        return cls.from_dict(data) # type: ignore
     else:
         raise ValueError(f"Unknown serializer: {serializer}")
 
 
 def deserialize(data: Union[dict,str], cls: type):
-    if type(data) == str:
-        import json
-        data = json.loads(data)
-    assert type(data) == dict, f"Data must be a dict, not {type(data)}"
-    serializer = check_serializer(cls)
+    serializer = check_serializer(cls)    
     return deserialize_obj(data, cls, serializer)
 
 

@@ -38,7 +38,7 @@ def test_options_dict():
         # Register the update
         upup.register_updates("DataSchemaOptsDict", DataSchema1, DataSchema2, fn_update=update_1_to_2)
 
-        data = '{"x": 1}'
+        data = {"x": 1}
         options = upup.Options(write_versions=True, write_version_prefix="TMP", write_versions_dir=".")
         obj = upup.load("DataSchemaOptsDict", data, options=options)
         assert os.path.exists("TMP_DataSchema2.json")
