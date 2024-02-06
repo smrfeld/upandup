@@ -66,5 +66,4 @@ def test_options_yaml():
         assert obj.y == 0
     
     finally:
-        pass
-        #clean_up()
+        clean_up()
