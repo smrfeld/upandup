@@ -32,3 +32,8 @@ def load(label: str, data: Any) -> object:
         obj = updater.update(obj, Updater.Options())
     
     return obj
+
+def make_load_fn(label: str) -> Callable[[Any], object]:
+    def load_fn(data: Any) -> object:
+        return load(label, data)
+    return load_fn
