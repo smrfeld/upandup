@@ -29,7 +29,6 @@ def load(label: str, data: Any) -> object:
     if type(obj) != updater.cls_list[-1]:
 
         # Update
-        logger.debug(f"Updating {label} from {type(obj)}")
         obj = updater.update(obj, Updater.Options())
     
     return obj

@@ -56,6 +56,7 @@ class Updater:
     def update(self, obj_start: object, options: Options) -> object:
         info = self._update_info_for_obj(obj_start)
         while info:
+            logger.debug(f"Updating {info.label} from {info.cls_start} to {info.cls_end}")
             obj_start = _update_step(obj_start, info)
             info = self._update_info_for_obj(obj_start)
 
