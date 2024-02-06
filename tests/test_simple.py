@@ -30,7 +30,6 @@ def test_simple():
     assert type(obj) == DataSchema2
     assert obj.x == 1
     assert obj.y == 0
-    print(obj)
 
 def test_alt():
 
@@ -44,7 +43,6 @@ def test_alt():
     assert type(obj) == DataSchema2alt
     assert obj.x == 1
     assert obj.y == 3
-    print(obj)
 
 def test_incomplete_updates():
 

@@ -24,3 +24,4 @@ update_2_to_3 = lambda cls_start, cls_end, obj_start: cls_end(x=obj_start.x, nam
 upup.register_updates("DataSchema", DataSchema1, DataSchema2, fn_update=update_1_to_2)
 upup.register_updates("DataSchema", DataSchema2, DataSchema3, fn_update=update_2_to_3)
 load_data_schema = upup.make_load_fn("DataSchema")
+Options = upup.Options

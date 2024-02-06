@@ -2,8 +2,21 @@ from upandup.checker import deserialize
 from upandup.updater import Updater, updaters
 from typing import Callable, List, Optional, Any, Dict
 from loguru import logger
+from dataclasses import dataclass
+from mashumaro import DataClassDictMixin
 
-def load(label: str, data: Any) -> object:
+
+@dataclass
+class Options(DataClassDictMixin):
+    write_versions: bool = False
+    write_versions_dir: str = "."
+    write_version_prefix: str = ""
+
+
+def load(label: str, data: Any, options: Options = Options()) -> object:
+
+    # Convert to options
+    options_updater = Updater.Options.from_dict(options.to_dict())
 
     # Try to load classes in reverse order
     assert label in updaters, f"No updates registered for label: {label}"
@@ -29,11 +42,11 @@ def load(label: str, data: Any) -> object:
     if type(obj) != updater.cls_list[-1]:
 
         # Update
-        obj = updater.update(obj, Updater.Options())
+        obj = updater.update(obj, options=options_updater)
     
     return obj
 
-def make_load_fn(label: str) -> Callable[[Any], object]:
-    def load_fn(data: Any) -> object:
-        return load(label, data)
+def make_load_fn(label: str) -> Callable[[Any, Options], object]:
+    def load_fn(data: Any, options: Options = Options()) -> object:
+        return load(label, data, options=options)
     return load_fn
