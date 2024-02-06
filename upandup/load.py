@@ -32,11 +32,12 @@ def load(label: str, data: Any, options: Options = Options()) -> object:
         cls = cls_list.pop()
         try:
             obj = deserialize(data, cls)
-        except:
+        except Exception as e:
+            logger.debug(f"Could not deserialize data with class {cls}: {e}")
             continue
     
     # If no class worked, raise error
-    assert obj is not None, f"Could not deserialize data with any class in {cls_list}"
+    assert obj is not None, f"Could not deserialize data with any class in {updater.cls_list}"
 
     # Check if last class is the most recent
     if type(obj) != updater.cls_list[-1]:

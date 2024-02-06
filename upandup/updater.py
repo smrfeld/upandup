@@ -1,4 +1,4 @@
-from upandup.serializer import deserialize, serialize
+from upandup.serializer import deserialize, serialize, write_obj
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Any, Dict
 from loguru import logger
@@ -77,19 +77,9 @@ class Updater:
 
             # Write versions if needed
             if options.write_versions:
-
-                # Make file path to write to
                 cls_name = obj_start.__class__.__name__
-                bname = f"{cls_name}.json"
-                if options.write_version_prefix:
-                    bname = f"{options.write_version_prefix}_{bname}"
-                file_path = os.path.join(options.write_versions_dir, bname)
-                logger.debug(f"Writing version {cls_name} to {file_path}")
-                
-                # Write
-                os.makedirs(options.write_versions_dir, exist_ok=True)
-                with open(file_path, "w") as f:
-                    json.dump(serialize(obj_start), f, indent=4)
+                bname_wo_ext = f"{options.write_version_prefix}_{cls_name}" if options.write_version_prefix else cls_name                
+                write_obj(obj_start, options.write_versions_dir, bname_wo_ext)
 
         return obj_start
 

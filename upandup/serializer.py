@@ -1,5 +1,6 @@
 from enum import Enum
 import os
+from typing import Union
 
 
 class Serializer(Enum):
@@ -11,9 +12,7 @@ class Serializer(Enum):
 
 
 def check_serializer(cls) -> Serializer:
-    if hasattr(cls, "to_dict") and hasattr(cls, "from_dict"):
-        return Serializer.DICT
-    elif hasattr(cls, "to_json") and hasattr(cls, "from_json"):
+    if hasattr(cls, "to_json") and hasattr(cls, "from_json"):
         return Serializer.JSON
     elif hasattr(cls, "to_json") and hasattr(cls, "from_json"):
         return Serializer.ORJSON
@@ -21,6 +20,8 @@ def check_serializer(cls) -> Serializer:
         return Serializer.YAML
     elif hasattr(cls, "to_toml") and hasattr(cls, "from_toml"):
         return Serializer.TOML
+    elif hasattr(cls, "to_dict") and hasattr(cls, "from_dict"):
+        return Serializer.DICT
     else:
         raise AttributeError("Serializer class must have to_dict/from_dict or to_json/from_json methods")
 
@@ -51,6 +52,17 @@ def serialize(obj: object) -> dict:
     return serialize_obj(obj, serializer)
 
 
+def serialize_to_str(obj: object) -> str:
+    d = serialize(obj)
+    if type(d) == dict:
+        import json
+        return json.dumps(d)
+    elif type(d) == str:
+        return d
+    else:
+        raise ValueError(f"Unknown type: {type(d)}")
+
+
 def deserialize_obj(data: dict, cls: type, serializer: Serializer):
     if serializer == Serializer.DICT:
         assert hasattr(cls, "to_dict") and hasattr(cls, "from_dict"), f"Serializer class must have to_dict/from_dict methods"
@@ -71,13 +83,16 @@ def deserialize_obj(data: dict, cls: type, serializer: Serializer):
         raise ValueError(f"Unknown serializer: {serializer}")
 
 
-def deserialize(data: dict, cls: type):
+def deserialize(data: Union[dict,str], cls: type):
+    if type(data) == str:
+        import json
+        data = json.loads(data)
+    assert type(data) == dict, f"Data must be a dict, not {type(data)}"
     serializer = check_serializer(cls)
     return deserialize_obj(data, cls, serializer)
 
 
 def write_obj(obj: object, dir_name: str, bname_wo_ext: str):
-    data = serialize(obj)
     cls = type(obj)
     serializer = check_serializer(cls)
 
@@ -86,34 +101,18 @@ def write_obj(obj: object, dir_name: str, bname_wo_ext: str):
         return os.path.join(dir_name, f"{bname_wo_ext}.{ext}")
 
     if serializer == Serializer.DICT:
-        import json
         ext = "json"
-        fp = file_path(ext)
-        with open(fp, "w") as f:
-            json.dump(data, f, indent=3)
     elif serializer == Serializer.JSON:
-        import json
         ext = "json"
-        fp = file_path(ext)
-        with open(fp, "w") as f:
-            json.dump(data, f, indent=3)
     elif serializer == Serializer.ORJSON:
-        import orjson
         ext = "json"
-        fp = file_path(ext)
-        with open(fp, "w") as f:
-            f.write(orjson.dumps(data, option=orjson.OPT_INDENT_2).decode())
     elif serializer == Serializer.YAML:
-        import yaml
         ext = "yaml"
-        fp = file_path(ext)
-        with open(fp, "w") as f:
-            yaml.dump(data, f, indent=3)
     elif serializer == Serializer.TOML:
-        import toml
         ext = "toml"
-        fp = file_path(ext)
-        with open(fp, "w") as f:
-            toml.dump(data, f)
     else:
         raise ValueError(f"Unknown serializer: {serializer}")
+
+    fp = file_path(ext)
+    with open(fp, "w") as f:
+        f.write(serialize_to_str(obj))
