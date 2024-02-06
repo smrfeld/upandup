@@ -1,7 +1,7 @@
 from upanddown.checker import deserialize
 from upanddown.updater import Updater, updaters
-from dataclasses import dataclass
 from typing import Callable, List, Optional, Any, Dict
+from loguru import logger
 
 def load(label: str, data: Any) -> object:
 
@@ -29,7 +29,7 @@ def load(label: str, data: Any) -> object:
     if type(obj) != updater.cls_list[-1]:
 
         # Update
-        print(f"Updating {label} from {type(obj)}")
+        logger.debug(f"Updating {label} from {type(obj)}")
         obj = updater.update(obj, Updater.Options())
     
     return obj

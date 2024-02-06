@@ -1,6 +1,7 @@
 from upanddown.checker import deserialize
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Any, Dict
+from loguru import logger
 
 @dataclass
 class UpdateInfo:
@@ -29,7 +30,7 @@ class Updater:
         fn_update: Callable[[type,type,object], object]
         ):
         if len(self._updates) > 0:
-            
+
             # Check it's a one way
             assert cls_start == self._updates[-1].cls_end, f"Class mismatch: {cls_start} != {self._updates[-1].cls_end}"
 
@@ -39,7 +40,7 @@ class Updater:
         info = UpdateInfo(label=self.label, cls_start=cls_start, cls_end=cls_end, fn_update=fn_update)
         assert self._update_info_for_cls(info.cls_start) is None, f"Update already exists for start class: {info.cls_start}"
         self._updates.append(info)
-        print(f"Registered update: {self.label} {cls_start} -> {cls_end}")
+        logger.debug(f"Registered update: {self.label} {cls_start} -> {cls_end}")
 
     def _update_info_for_obj(self, obj_start: object) -> Optional[UpdateInfo]:
         return self._update_info_for_cls(type(obj_start))
