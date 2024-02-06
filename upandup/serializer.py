@@ -1,4 +1,5 @@
 from enum import Enum
+import os
 
 
 class Serializer(Enum):
@@ -73,3 +74,46 @@ def deserialize_obj(data: dict, cls: type, serializer: Serializer):
 def deserialize(data: dict, cls: type):
     serializer = check_serializer(cls)
     return deserialize_obj(data, cls, serializer)
+
+
+def write_obj(obj: object, dir_name: str, bname_wo_ext: str):
+    data = serialize(obj)
+    cls = type(obj)
+    serializer = check_serializer(cls)
+
+    os.makedirs(dir_name, exist_ok=True)
+    def file_path(ext: str):
+        return os.path.join(dir_name, f"{bname_wo_ext}.{ext}")
+
+    if serializer == Serializer.DICT:
+        import json
+        ext = "json"
+        fp = file_path(ext)
+        with open(fp, "w") as f:
+            json.dump(data, f, indent=3)
+    elif serializer == Serializer.JSON:
+        import json
+        ext = "json"
+        fp = file_path(ext)
+        with open(fp, "w") as f:
+            json.dump(data, f, indent=3)
+    elif serializer == Serializer.ORJSON:
+        import orjson
+        ext = "json"
+        fp = file_path(ext)
+        with open(fp, "w") as f:
+            f.write(orjson.dumps(data, option=orjson.OPT_INDENT_2).decode())
+    elif serializer == Serializer.YAML:
+        import yaml
+        ext = "yaml"
+        fp = file_path(ext)
+        with open(fp, "w") as f:
+            yaml.dump(data, f, indent=3)
+    elif serializer == Serializer.TOML:
+        import toml
+        ext = "toml"
+        fp = file_path(ext)
+        with open(fp, "w") as f:
+            toml.dump(data, f)
+    else:
+        raise ValueError(f"Unknown serializer: {serializer}")
