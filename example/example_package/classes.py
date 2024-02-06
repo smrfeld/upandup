@@ -1,4 +1,4 @@
-from upanddown import register_updates
+from upandup import register_updates
 from mashumaro import DataClassDictMixin
 from dataclasses import dataclass
 

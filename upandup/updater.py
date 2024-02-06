@@ -1,4 +1,4 @@
-from upanddown.checker import deserialize
+from upandup.checker import deserialize
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Any, Dict
 from loguru import logger

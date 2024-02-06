@@ -1,5 +1,5 @@
-from upanddown.checker import deserialize
-from upanddown.updater import Updater, updaters
+from upandup.checker import deserialize
+from upandup.updater import Updater, updaters
 from typing import Callable, List, Optional, Any, Dict
 from loguru import logger
 

@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='upanddown',
+    name='upandup',
     version='0.1.0',
     description='A schema versioning system for Python dataclasses',
-    url='https://github.com/smrfeld/upanddown',
+    url='https://github.com/smrfeld/upandup',
     packages=find_packages(),
     install_requires=[
         # Add your package dependencies here

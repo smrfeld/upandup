@@ -1,4 +1,4 @@
-import upanddown as updn
+import upandup as upup
 import example_package
 from loguru import logger
 
