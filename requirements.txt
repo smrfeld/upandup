@@ -1,0 +1,4 @@
+loguru==0.7.2
+mashumaro==3.12
+pytest==8.0.0
+setuptools==68.2.2
