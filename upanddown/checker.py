@@ -19,3 +19,19 @@ def serialize_obj(obj, serializer: Serializer):
         return obj.to_json()
     else:
         raise ValueError(f"Unknown serializer: {serializer}")
+
+def serialize(cls, obj):
+    serializer = check_serializer(cls)
+    return serialize_obj(obj, serializer)
+
+def deserialize_obj(data, cls, serializer: Serializer):
+    if serializer == Serializer.DICT:
+        return cls.from_dict(data)
+    elif serializer == Serializer.JSON:
+        return cls.from_json(data)
+    else:
+        raise ValueError(f"Unknown serializer: {serializer}")
+
+def deserialize(data, cls):
+    serializer = check_serializer(cls)
+    return deserialize_obj(data, cls, serializer)
