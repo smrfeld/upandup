@@ -49,8 +49,10 @@ def load(label: str, data: Any) -> object:
     updates_for_label = updates.get(label,[])
     assert len(updates_for_label) > 0, f"No updates found for label: {label}"
 
-    # Classes
+    # Classes to check to deserialize
     cls_list = [updates_for_label[0].cls_start] + [u.cls_end for u in updates_for_label]
+
+    # Try to deserialize, using most recent class first
     obj = None
     while obj is None and len(cls_list) > 0:
         cls = cls_list.pop()
@@ -59,4 +61,14 @@ def load(label: str, data: Any) -> object:
         except:
             continue
     
-    print(obj)
+    # If no class worked, raise error
+    assert obj is not None, f"Could not deserialize data with any class in {cls_list}"
+
+    # Check if last class is the most recent
+    if type(obj) != updates_for_label[0].cls_end:
+
+        # Update
+        print(f"Updating {label} from {type(obj)} to {updates_for_label[0].cls_end}")
+        obj = update(label, obj, Options())
+
+    return obj
