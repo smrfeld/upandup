@@ -70,6 +70,7 @@ def deserialize_obj(data: Union[dict,str], cls: type, serializer: Serializer):
         return cls.from_toml(data) # type: ignore
     elif serializer == Serializer.DICT:
         assert hasattr(cls, "to_dict") and hasattr(cls, "from_dict"), f"Serializer class must have to_dict/from_dict methods"
+        assert type(data) == dict, f"Type of data must be dict, not {type(data)}: {data}"
         return cls.from_dict(data) # type: ignore
     else:
         raise ValueError(f"Unknown serializer: {serializer}")
