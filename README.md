@@ -1,4 +1,4 @@
-# Up-and-up
+# Up-and-up :rocket:
 
 `upandup` is a simple schema versioning system for Python dataclasses.
 
