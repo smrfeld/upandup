@@ -48,6 +48,7 @@ upup.register_updates("DataSchema", DataSchemaV1, DataSchemaV2, fn_update=update
 upup.register_updates("DataSchema", DataSchemaV2, DataSchema, fn_update=update_2_to_latest)
 
 # Expose a helper function to load the latest version of the schema
+# This makes a thin wrapper around upup.load
 load_data_schema = upup.make_load_fn("DataSchema")
 ```
 
@@ -60,4 +61,21 @@ obj = load_data_schema(data, options=upup.Options())
 
 print("Result:")
 print(f"Loaded object: {obj} of type {type(obj)}") # Loaded object: DataSchema(x=1, name='default') of type DataSchema
+```
+
+## Options
+
+### Write intermediate versions
+
+By default, the intermediate versions from updating to the latest are not written to the output. If you want to write them, you can set the `write_intermediate` option to `True`.
+
+```python
+data = {"x": 1}
+options = upup.Options(write_versions=True, write_version_prefix="output", write_versions_dir=".")
+obj = upup.load("DataSchema", data, options=options)
+```
+
+This will write the files:
+```
+output_
 ```

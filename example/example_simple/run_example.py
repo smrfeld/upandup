@@ -44,3 +44,10 @@ obj = load_data_schema(data, upup.Options())
 
 print("Result:")
 print(f"Loaded object: {obj} of type {type(obj).__name__}") # Loaded object: DataSchema(x=1, name='default') of type DataSchema
+
+# Alternatively, you can use upup.load instaed of the load_data_schema helper function
+# obj = upup.load("DataSchema", data, options=upup.Options())
+
+# Write intermediate versions
+options = upup.Options(write_versions=True, write_version_prefix="version", write_versions_dir=".")
+obj = load_data_schema(data, options)

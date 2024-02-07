@@ -68,7 +68,17 @@ class Updater:
         write_version_prefix: str = ""
 
 
+    def _write_obj_if_needed(self, obj: object, options: Options):
+        if options.write_versions:
+            cls_name = obj.__class__.__name__
+            bname_wo_ext = f"{options.write_version_prefix}_{cls_name}" if options.write_version_prefix else cls_name
+            write_obj(obj, options.write_versions_dir, bname_wo_ext)
+
+
     def update(self, obj_start: object, options: Options = Options()) -> object:
+        # Write initial version if needed
+        self._write_obj_if_needed(obj_start, options)
+
         info = self._update_info_for_obj(obj_start)
         while info:
             logger.debug(f"Updating {info.label} from {info.cls_start.__name__} to {info.cls_end.__name__}")
@@ -76,11 +86,8 @@ class Updater:
             info = self._update_info_for_obj(obj_start)
 
             # Write versions if needed
-            if options.write_versions:
-                cls_name = obj_start.__class__.__name__
-                bname_wo_ext = f"{options.write_version_prefix}_{cls_name}" if options.write_version_prefix else cls_name                
-                write_obj(obj_start, options.write_versions_dir, bname_wo_ext)
-
+            self._write_obj_if_needed(obj_start, options)
+        
         return obj_start
 
 
