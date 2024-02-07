@@ -7,7 +7,6 @@ from loguru import logger
 class Serializer(Enum):
     DICT = "dict"
     JSON = "json"
-    ORJSON = "orjson"
     YAML = "yaml"
     TOML = "toml"
 
@@ -15,8 +14,6 @@ class Serializer(Enum):
 def check_serializer(cls) -> Serializer:
     if hasattr(cls, "to_json") and hasattr(cls, "from_json"):
         return Serializer.JSON
-    elif hasattr(cls, "to_json") and hasattr(cls, "from_json"):
-        return Serializer.ORJSON
     elif hasattr(cls, "to_yaml") and hasattr(cls, "from_yaml"):
         return Serializer.YAML
     elif hasattr(cls, "to_toml") and hasattr(cls, "from_toml"):
@@ -34,9 +31,6 @@ def serialize_obj(obj: object, serializer: Serializer):
     elif serializer == Serializer.JSON:
         assert hasattr(obj, "to_json") and hasattr(obj, "from_json"), f"Serializer class must have to_json/from_json methods"
         return obj.to_json() # type: ignore
-    elif serializer == Serializer.ORJSON:
-        assert hasattr(obj, "to_orjson") and hasattr(obj, "from_orjson"), f"Serializer class must have to_orjson/from_orjson methods"
-        return obj.to_orjson() # type: ignore
     elif serializer == Serializer.YAML:
         assert hasattr(obj, "to_yaml") and hasattr(obj, "from_yaml"), f"Serializer class must have to_yaml/from_yaml methods"
         return obj.to_yaml() # type: ignore
@@ -68,9 +62,6 @@ def deserialize_obj(data: Union[dict,str], cls: type, serializer: Serializer):
     if serializer == Serializer.JSON:
         assert hasattr(cls, "to_json") and hasattr(cls, "from_json"), f"Serializer class must have to_json/from_json methods"
         return cls.from_json(data) # type: ignore
-    elif serializer == Serializer.ORJSON:
-        assert hasattr(cls, "to_orjson") and hasattr(cls, "from_orjson"), f"Serializer class must have to_orjson/from_orjson methods"
-        return cls.from_orjson(data) # type: ignore
     elif serializer == Serializer.YAML:
         assert hasattr(cls, "to_yaml") and hasattr(cls, "from_yaml"), f"Serializer class must have to_yaml/from_yaml methods"
         return cls.from_yaml(data) # type: ignore
@@ -100,8 +91,6 @@ def write_obj(obj: object, dir_name: str, bname_wo_ext: str):
     if serializer == Serializer.DICT:
         ext = "json"
     elif serializer == Serializer.JSON:
-        ext = "json"
-    elif serializer == Serializer.ORJSON:
         ext = "json"
     elif serializer == Serializer.YAML:
         ext = "yaml"

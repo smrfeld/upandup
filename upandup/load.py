@@ -7,16 +7,59 @@ from mashumaro import DataClassDictMixin
 
 
 @dataclass
-class Options(DataClassDictMixin):
+class LoadOptions(DataClassDictMixin):
+    """Options for loading data.
+    """    
+
     write_versions: bool = False
+    """Write intermediate versions of the data."""
+
     write_versions_dir: str = "."
+    """Directory to write intermediate versions of the data."""
+
     write_version_prefix: str = ""
+    """Prefix for the intermediate versions of the data."""
 
 
-def load(label: str, data: Any, options: Options = Options()) -> object:
+def update_to_latest(label: str, obj: object, options: LoadOptions = LoadOptions()) -> object:
+    """Update an object to the latest version.
+
+    Args:
+        label (str): Unique label for the schema.
+        obj (object): Object to update.
+        options (LoadOptions, optional): Options. Defaults to LoadOptions().
+
+    Returns:
+        object: Object updated to the latest version.
+    """    
 
     # Convert to options
     options_updater = Updater.Options.from_dict(options.to_dict())
+    
+    # Try to load classes in reverse order
+    assert label in updaters, f"No updates registered for label: {label}"
+    updater = updaters[label]
+
+    # Check if last class is the most recent
+    if type(obj) != updater.cls_list[-1]:
+
+        # Update
+        obj = updater.update(obj, options=options_updater)
+    
+    return obj
+
+
+def load(label: str, data: Any, options: LoadOptions = LoadOptions()) -> object:
+    """Load data from a serialized format, automatically updating to the latest version if necessary.
+
+    Args:
+        label (str): Unique label for the schema.
+        data (Any): Serialized data.
+        options (LoadOptions, optional): Options. Defaults to LoadOptions().
+
+    Returns:
+        object: Object loaded from the serialized data.
+    """    
 
     # Try to load classes in reverse order
     assert label in updaters, f"No updates registered for label: {label}"
@@ -38,16 +81,11 @@ def load(label: str, data: Any, options: Options = Options()) -> object:
     
     # If no class worked, raise error
     assert obj is not None, f"Could not deserialize data [{data}] with any class in {updater.cls_list}"
-
-    # Check if last class is the most recent
-    if type(obj) != updater.cls_list[-1]:
-
-        # Update
-        obj = updater.update(obj, options=options_updater)
     
-    return obj
+    # Update to latest
+    return update_to_latest(label, obj, options=options)
 
-def make_load_fn(label: str) -> Callable[[Any, Options], object]:
-    def load_fn(data: Any, options: Options = Options()) -> object:
+def make_load_fn(label: str) -> Callable[[Any, LoadOptions], object]:
+    def load_fn(data: Any, options: LoadOptions = LoadOptions()) -> object:
         return load(label, data, options=options)
     return load_fn

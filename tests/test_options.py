@@ -5,6 +5,7 @@ from mashumaro import DataClassDictMixin
 from mashumaro.mixins.yaml import DataClassYAMLMixin
 from dataclasses import dataclass
 import os
+import glob
 
 @dataclass
 class DataSchema1(DataClassDictMixin):
@@ -25,7 +26,7 @@ class DataYaml2(DataClassYAMLMixin):
     y: int
 
 def clean_up():
-    fnames = ["TMP_DataSchema2.json"]
+    fnames = sorted(glob.glob("./TMP*"))
     for fname in fnames:
         if os.path.exists(fname):
             os.remove(fname)
@@ -39,7 +40,7 @@ def test_options_dict():
         upup.register_updates("DataSchemaOptsDict", DataSchema1, DataSchema2, fn_update=update_1_to_2)
 
         data = {"x": 1}
-        options = upup.Options(write_versions=True, write_version_prefix="TMP", write_versions_dir=".")
+        options = upup.LoadOptions(write_versions=True, write_version_prefix="TMP", write_versions_dir=".")
         obj = upup.load("DataSchemaOptsDict", data, options=options)
         assert os.path.exists("TMP_DataSchema2.json")
         assert type(obj) == DataSchema2
@@ -58,8 +59,9 @@ def test_options_yaml():
         upup.register_updates("DataSchemaOptsYaml", DataYaml1, DataYaml2, fn_update=update_1_to_2)
 
         data = 'x: 3\n'
-        options = upup.Options(write_versions=True, write_version_prefix="TMP", write_versions_dir=".")
+        options = upup.LoadOptions(write_versions=True, write_version_prefix="TMP", write_versions_dir=".")
         obj = upup.load("DataSchemaOptsYaml", data, options=options)
+        assert os.path.exists("TMP_DataYaml1.yaml")
         assert os.path.exists("TMP_DataYaml2.yaml")
         assert type(obj) == DataYaml2
         assert obj.x == 3

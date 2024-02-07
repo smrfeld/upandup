@@ -63,6 +63,13 @@ data = { x: 1 }
 obj = load_data_schema(data)
 ```
 
+## Serialization formats supported
+
+* Dictionary - define `to_dict` and `from_dict` methods on your dataclasses.
+* JSON - define `to_json` and `from_json` methods on your dataclasses.
+* YAML - define `to_yaml` and `from_yaml` methods on your dataclasses.
+* TOML - define `to_toml` and `from_toml` methods on your dataclasses.
+
 ## Example
 
 First, define some dataclasses. Let's say you have a `DataSchema` dataclass, which is the latest version, but also 2 older versions called `DataSchemaV1` and `DataSchemaV2`. These classes have `to_json` and `from_json` methods defined via the `mashumaro` package by inheriting from `DataClassDictMixin` (they could also be defined manually).
@@ -118,7 +125,7 @@ Finally, we can test the update.
 ```python
 # Test the update
 data = {"x": 1}
-obj = load_data_schema(data, options=upup.Options())
+obj = load_data_schema(data, options=upup.LoadOptions())
 
 print("Result:")
 print(f"Loaded object: {obj} of type {type(obj)}") # Loaded object: DataSchema(x=1, name='default') of type DataSchema
@@ -132,7 +139,7 @@ By default, the intermediate versions from updating to the latest are not writte
 
 ```python
 data = {"x": 1}
-options = upup.Options(write_versions=True, write_version_prefix="version", write_versions_dir=".")
+options = upup.LoadOptions(write_versions=True, write_version_prefix="version", write_versions_dir=".")
 obj = upup.load("DataSchema", data, options=options)
 ```
 
@@ -242,7 +249,7 @@ upup.register_updates("DataSchema", DataSchemaV2, DataSchema, fn_update=update_2
 
 # Expose the load function and options in a nicer way
 load_data_schema = upup.make_load_fn("DataSchema")
-Options = upup.Options
+Options = upup.LoadOptions
 ```
 
 As noted in the `__init__.py`, we also expose the `load_data_schema` and `Options` from `register_updates.py`. This lets users easily load the latest version of the schema **every time** from any old version.
@@ -260,3 +267,11 @@ print(f"Loaded object: {obj} of type {type(obj).__name__}") # Loaded object: Dat
 ```
 
 Note that the `upandup` package itself did not have to be called.
+
+### Tests
+
+Tests are included in the `tests` directory and built on `pytest` - from the root directory, run:
+
+```bash
+pytest
+```

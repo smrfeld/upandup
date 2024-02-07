@@ -12,4 +12,4 @@ upup.register_updates("DataSchema", DataSchemaV2, DataSchema, fn_update=update_2
 
 # Expose the load function and options in a nicer way
 load_data_schema = upup.make_load_fn("DataSchema")
-Options = upup.Options
+Options = upup.LoadOptions
