@@ -20,7 +20,7 @@ Users might end up serializing this to JSON:
 
 ```json
 {
-    x: 1
+    "x": 1
 }
 ```
 
