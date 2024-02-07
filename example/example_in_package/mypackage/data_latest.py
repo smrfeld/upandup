@@ -2,5 +2,6 @@ from mashumaro import DataClassDictMixin
 from dataclasses import dataclass
 
 @dataclass
-class DataSchema1(DataClassDictMixin):
+class DataSchema(DataClassDictMixin):
     x: int
+    name: str

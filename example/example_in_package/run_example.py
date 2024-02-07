@@ -1,5 +1,6 @@
-import example_package as ep
+import mypackage as mp
 
 data = {"x": 1}
-obj = ep.load_data_schema(data, ep.Options())
-print(f"Loaded object: {obj}")
+obj = mp.load_data_schema(data, mp.Options())
+print("Result:")
+print(f"Loaded object: {obj} of type {type(obj).__name__}")

@@ -49,7 +49,7 @@ class Updater:
         info = UpdateInfo(label=self.label, cls_start=cls_start, cls_end=cls_end, fn_update=fn_update)
         assert self._update_info_for_cls(info.cls_start) is None, f"Update already exists for start class: {info.cls_start}"
         self._updates.append(info)
-        logger.debug(f"Registered update: {self.label} {cls_start} -> {cls_end}")
+        logger.debug(f"Registered update: {self.label} {cls_start.__name__} -> {cls_end.__name__}")
 
 
     def _update_info_for_obj(self, obj_start: object) -> Optional[UpdateInfo]:
@@ -71,7 +71,7 @@ class Updater:
     def update(self, obj_start: object, options: Options = Options()) -> object:
         info = self._update_info_for_obj(obj_start)
         while info:
-            logger.debug(f"Updating {info.label} from {info.cls_start} to {info.cls_end}")
+            logger.debug(f"Updating {info.label} from {info.cls_start.__name__} to {info.cls_end.__name__}")
             obj_start = _update_step(obj_start, info)
             info = self._update_info_for_obj(obj_start)
 

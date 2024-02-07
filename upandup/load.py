@@ -33,7 +33,7 @@ def load(label: str, data: Any, options: Options = Options()) -> object:
         try:
             obj = deserialize(data, cls)
         except Exception as e:
-            logger.debug(f"Could not deserialize data [{data}] with class {cls}: {e}")
+            # logger.debug(f"Could not deserialize data [{data}] with class {cls}: {e}")
             continue
     
     # If no class worked, raise error
