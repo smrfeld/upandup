@@ -4,6 +4,7 @@ setup(
     name='upandup',
     version='0.1.0',
     description='A simple schema versioning system for Python dataclasses',
+    long_description=open('README.md').read(),
     url='https://github.com/smrfeld/upandup',
     packages=find_packages(),
     install_requires=[
