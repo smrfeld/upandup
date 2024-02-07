@@ -6,9 +6,10 @@ setup(
     description='An example package',
     packages=find_packages(),
     install_requires=[
-        # Add your package dependencies here
-        # 'numpy>=1.18.1',
-        # 'pandas>=1.0.3',
+        "loguru",
+        "mashumaro",
+        "setuptools",
+        "upandup"
     ],
     python_requires='>=3.11',
 )
