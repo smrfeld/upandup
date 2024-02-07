@@ -9,10 +9,20 @@ from mashumaro import DataClassDictMixin
 
 @dataclass
 class UpdateInfo:
+    """Update info for one step in the update process.
+    """    
+
     label: str
+    "Label for the schema."
+
     cls_start: type
+    "Class to update from."
+
     cls_end: type
+    "Class to update to."
+
     fn_update: Callable[[type,type,object], object]
+    "Function to update from start to end class. Args: cls_start, cls_end, obj_start. Returns: obj_end."
 
 
 class Updater:
@@ -100,6 +110,14 @@ def register_updates(
     cls_end: type, 
     fn_update: Callable[[type,type,object], object]
     ):
+    """Register an update step.
+
+    Args:
+        label (str): Unique label for the schema.
+        cls_start (type): Class to update from.
+        cls_end (type): Class to update to.
+        fn_update (Callable[[type,type,object], object]): Function to update from start to end class. Args: cls_start, cls_end, obj_start. Returns: obj_end.
+    """    
     updaters.setdefault(label, Updater(label)).register_updates(cls_start, cls_end, fn_update)
 
 
