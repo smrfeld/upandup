@@ -26,20 +26,36 @@ class UpdateInfo:
 
 
 class Updater:
-
+    """Updater for a schema.
+    """    
 
     def __init__(self, label: str):
+        """Constructor.
+
+        Args:
+            label (str): Unique label for the schema.
+        """        
         self.label = label
         self._updates: List[UpdateInfo] = []
     
 
     @property
     def no_update_steps(self) -> int:
+        """Number of update steps.
+
+        Returns:
+            int: Number of update steps.
+        """        
         return len(self._updates)
 
 
     @property
     def cls_list(self) -> List[type]:
+        """List of classes involved in the update, in order.
+
+        Returns:
+            List[type]: List of classes involved in the update, in order.
+        """        
         return [u.cls_start for u in self._updates] + [self._updates[-1].cls_end]
 
 
@@ -48,6 +64,13 @@ class Updater:
         cls_end: type, 
         fn_update: Callable[[type,type,object], object]
         ):
+        """Register an update step.
+
+        Args:
+            cls_start (type): Start class.
+            cls_end (type): End class.
+            fn_update (Callable[[type,type,object], object]): Function to update from start to end class. Args: cls_start, cls_end, obj_start. Returns: obj_end.
+        """        
         if len(self._updates) > 0:
 
             # Check it's a one way
@@ -63,22 +86,52 @@ class Updater:
 
 
     def _update_info_for_obj(self, obj_start: object) -> Optional[UpdateInfo]:
+        """Update info for an object.
+
+        Args:
+            obj_start (object): Object to update.
+
+        Returns:
+            Optional[UpdateInfo]: Update info for the object.
+        """        
         return self._update_info_for_cls(type(obj_start))
 
 
     def _update_info_for_cls(self, cls_start: type) -> Optional[UpdateInfo]:
+        """Update info for a class.
+
+        Args:
+            cls_start (type): Class to update from.
+
+        Returns:
+            Optional[UpdateInfo]: Update info for the class.
+        """        
         updates_exist = [u for u in self._updates if u.cls_start == cls_start]
         return updates_exist[0] if len(updates_exist) else None
 
 
     @dataclass
     class Options(DataClassDictMixin):
+        """Options for the updater.
+        """        
+
         write_versions: bool = False
+        "Flag to write versions. Default: False."
+
         write_versions_dir: str = "."
+        "Directory to write versions. Only used if write_versions is True. Default: '.'."
+
         write_version_prefix: str = ""
+        "Prefix for version files. Only used if write_versions is True. Default: ''."
 
 
     def _write_obj_if_needed(self, obj: object, options: Options):
+        """Write object if needed.
+
+        Args:
+            obj (object): Object to write.
+            options (Options): Options.
+        """        
         if options.write_versions:
             cls_name = obj.__class__.__name__
             bname_wo_ext = f"{options.write_version_prefix}_{cls_name}" if options.write_version_prefix else cls_name
@@ -86,6 +139,15 @@ class Updater:
 
 
     def update(self, obj_start: object, options: Options = Options()) -> object:
+        """Update an object, if needed.
+
+        Args:
+            obj_start (object): Object to update.
+            options (Options, optional): Options. Defaults to Options().
+
+        Returns:
+            object: Object after updating.
+        """        
         # Write initial version if needed
         self._write_obj_if_needed(obj_start, options)
 
@@ -100,9 +162,8 @@ class Updater:
         
         return obj_start
 
-
+# Global dictionary of updaters
 updaters: Dict[str,Updater] = {}
-
 
 def register_updates(
     label: str, 
@@ -122,6 +183,15 @@ def register_updates(
 
 
 def _update_step(obj_start: object, info: UpdateInfo) -> object:
+    """Update an object from one class to another.
+
+    Args:
+        obj_start (object): Object to update.
+        info (UpdateInfo): Update info.
+
+    Returns:
+        object: Object after updating.
+    """    
     cls_start = type(obj_start)
     assert cls_start == info.cls_start, f"Class mismatch: {cls_start} != {info.cls_start}"
 
