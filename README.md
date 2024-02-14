@@ -2,6 +2,14 @@
 
 `upandup` is a simple schema versioning system for Python dataclasses.
 
+Contents:
+* [Why?](#why)
+* [Serialization formats supported](#serialization-formats-supported)
+* [Installation](#installation)
+* [Example](#example)
+* [Advanced usage](#advanced)
+* [Tests](#tests)
+
 ## Why?
 
 In Python, `dataclasses` are a great way to define data schemas. However, when the schema changes, you need to be able to update the old data to the latest version, or risk breaking the ability to load old data from JSON, YAML, or other formats.
@@ -69,6 +77,22 @@ obj = load_data_schema(data)
 * JSON - define `to_json` and `from_json` methods on your dataclasses.
 * YAML - define `to_yaml` and `from_yaml` methods on your dataclasses.
 * TOML - define `to_toml` and `from_toml` methods on your dataclasses.
+
+## Installation
+
+Install via pip:
+
+```bash
+pip install upandup
+```
+
+Alternatively, you can install from source:
+
+```bash
+git clone https://github.com/smrfeld/upandup
+cd upandup
+pip install -e .
+```
 
 ## Example
 
