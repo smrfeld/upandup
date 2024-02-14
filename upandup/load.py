@@ -80,7 +80,7 @@ def load(label: str, data: Any, options: LoadOptions = LoadOptions()) -> object:
             continue
     
     # If no class worked, raise error
-    assert obj is not None, f"Could not deserialize data [{data}] with any class in {updater.cls_list}"
+    assert obj is not None, f"Could not deserialize data <{data}> with any class in {updater.cls_list}"
     
     # Update to latest
     return update_to_latest(label, obj, options=options)
