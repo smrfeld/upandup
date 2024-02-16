@@ -77,7 +77,7 @@ menu:
       weight: 30
     - identifier: github
       name: GitHub
-      url: https://oliver-ernst.com/upandup
+      url: https://github.com/smrfeld/upandup
       weight: 40
 
 # Read: https://github.com/adityatelange/hugo-PaperMod/wiki/FAQs#using-hugos-syntax-highlighter-chroma
